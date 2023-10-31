@@ -75,7 +75,7 @@ class Sintatico:
     def C(self):
         if self.atualIgual( tt.READ ):
             self.R()
-        elif self.atualIgual( tt.PRINT ):
+        elif self.atualIgual( tt.WRITE ):
             self.P()
         else:
             self.A()
@@ -94,7 +94,7 @@ class Sintatico:
         self.consome( tt.PTOVIRG )
 
     def P(self):
-        self.consome( tt.PRINT )
+        self.consome( tt.WRITE )
         self.consome( tt.OPENPAR )
         self.consome( tt.IDENT )
         self.consome( tt.CLOSEPAR )

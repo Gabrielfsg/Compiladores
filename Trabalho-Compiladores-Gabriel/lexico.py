@@ -24,6 +24,41 @@
 
     iniciam com # ate o fim da linha
 
+
+    Linguagem Z
+
+    Gramatica::
+
+    P= {
+    PROG → program id pvirg DECLS C-COMP
+    DECLS →  | var LIST-DECLS
+    LIST-DECLS → DECL-TIPO D
+    D →  | LIST-DECLS
+    DECL-TIPO → LIST-ID dpontos TIPO pvirg
+    LIST-ID → id E
+    E →  | virg LIST-ID
+    TIPO → int | real | bool | char
+    C-COMP → abrech LISTA-COMANDOS fechach
+    LISTA-COMANDOS → COMANDOS G
+    G →  | LISTA-COMANDOS
+    COMANDOS → SE | ENQUANTO | LEIA | ESCREVA | ATRIBUICAO
+    SE → if abrepar EXPR fechapar C-COMP H
+    H →  | else C-COMP
+    ENQUANTO → while abrepar EXPR fechapar C-COMP
+    LEIA → read abrepar LIST-ID fechapar pvirg
+    ATRIBUICAO → id atrib EXPR pvirg
+    ESCREVA → write abrepar LIST-W fechapar pvirg
+    LIST-W → ELEM-W L
+    L →  | virg LIST-W
+    ELEM-W → EXPR | cadeia
+    EXPR → SIMPLES P
+    P →  | oprel SIMPLES
+    SIMPLES → TERMO R
+    R →  | opad SIMPLES
+    TERMO → FAT S
+    S →  | opmul TERMO
+    FAT → id | cte | abrepar EXPR fechapar | true | false | opneg FAT}
+
 """
 
 from os import path
@@ -33,7 +68,7 @@ class TipoToken:
     ATRIB = (2, '=')
     READ = (3, 'read')
     PTOVIRG = (4, ';')
-    PRINT = (5, 'print')
+    WRITE = (5, 'write')
     ADD = (6, '+')
     MULT = (7, '*')
     OPENPAR = (8, '(')
@@ -41,6 +76,28 @@ class TipoToken:
     NUM = (10, 'numero')
     ERROR = (11, 'erro')
     FIMARQ = (12, 'fim-de-arquivo')
+    PROGRAM = (13, 'program')
+    IF = (14, 'if')
+    ELSE = (15, 'else')
+    VAR = (16, 'var')
+    INT = (17, 'int')
+    REAL = (18, 'real')
+    BOOL = (19, 'bool')
+    CHAR = (20, 'char')
+    WHILE = (21, 'while')
+    FALSE = (22, 'false')
+    TRUE = (23, 'true')
+    IGUAL = (24, '==')
+    MAIOR = (25, '>')
+    MENOR = (26, '<')
+    MAIORIGUAL = (27, '>=')
+    MENORIGUAL = (28, '<=')
+    DIFERENTE = (29, '<>')
+    SUB = (30, '-')
+    DIV = (31, '/')
+    ABRECH = (32, '{')
+    FECHACH = (33, '}')
+    VIRG = (34, ',')
 
 class Token:
     def __init__(self, tipo, lexema, linha):
@@ -53,7 +110,10 @@ class Token:
 
 class Lexico:
     # dicionario de palavras reservadas
-    reservadas = { 'print': TipoToken.PRINT, 'read': TipoToken.READ }
+    reservadas = { 'write': TipoToken.WRITE, 'read': TipoToken.READ, 'program': TipoToken.PROGRAM, 'if': TipoToken.IF,
+                   'else': TipoToken.ELSE, 'var': TipoToken.VAR , 'int': TipoToken.INT, 'real': TipoToken.REAl,
+                   'bool': TipoToken.BOOL, 'char': TipoToken.CHAR , 'while': TipoToken.WHILE, 'false': TipoToken.FALSE,
+                   'true': TipoToken.TRUE}
 
     def __init__(self, nomeArquivo):
         self.nomeArquivo = nomeArquivo
@@ -118,7 +178,7 @@ class Lexico:
                     estado = 2
                 elif car.isdigit():
                     estado = 3
-                elif car in {'=', ';', '+', '*', '(', ')'}:
+                elif car in {'=', ';', '+', '*', '-', '/', '(', ')'}:
                     estado = 4
                 elif car == '#':
                     estado = 5
@@ -154,6 +214,10 @@ class Lexico:
                     return Token(TipoToken.ADD, lexema, self.linha)
                 elif car == '*':
                     return Token(TipoToken.MULT, lexema, self.linha)
+                elif car == '-':
+                    return Token(TipoToken.SUB, lexema, self.linha)
+                elif car == '/':
+                    return Token(TipoToken.DIV, lexema, self.linha)
                 elif car == '(':
                     return Token(TipoToken.OPENPAR, lexema, self.linha)
                 elif car == ')':
