@@ -1,0 +1,4 @@
+//Programa sem erros
+/*teste
+123 */
+program exemplo16;

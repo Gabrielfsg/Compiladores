@@ -61,6 +61,48 @@ class Sintatico:
                % (self.tokenAtual.linha, msg, self.tokenAtual.lexema))
             quit()
 
+    def Prog(self):
+        self.consome(tt.PROGRAM)
+        self.consome(tt.ID)
+        self.consome(tt.PTOVIRG)
+        self.Decls()
+        self.C_Comp()
+
+    def Decls(self):
+        if self.atualIgual( tt.VAR ):
+            self.consome(tt.VAR)
+            self.List_Decls()
+        else:
+            pass
+    def C_Comp(self):
+        self.consome(tt.ABRECH)
+        self.Lista_Comandos()
+        self.consome(tt.FECHACH)
+
+    def Tipo(self):
+        if self.atualIgual(tt.INT):
+            self.consome(tt.INT)
+        elif self.atualIgual(tt.REAL):
+            self.consome(tt.REAL)
+        elif self.atualIgual(tt.BOOL):
+            self.consome(tt.BOOL)
+        else:
+            self.consome(tt.CHAR)
+
+    def D(self):
+        if self.atualIgual(tt.ID):
+            self.List_Decls()
+        else:
+            pass
+
+    def List_Decls(self):
+
+    def Lista_Comandos(self):
+
+
+
+    ########################################
+
     def F(self):
         self.C()
         self.Rf()
@@ -81,7 +123,7 @@ class Sintatico:
             self.A()
 
     def A(self):
-        self.consome( tt.IDENT )
+        self.consome( tt.ID )
         self.consome( tt.ATRIB )
         self.E()
         self.consome( tt.PTOVIRG )
@@ -89,14 +131,14 @@ class Sintatico:
     def R(self):
         self.consome( tt.READ )
         self.consome( tt.OPENPAR )
-        self.consome( tt.IDENT )
+        self.consome( tt.ID )
         self.consome( tt.CLOSEPAR )
         self.consome( tt.PTOVIRG )
 
     def P(self):
         self.consome( tt.WRITE )
         self.consome( tt.OPENPAR )
-        self.consome( tt.IDENT )
+        self.consome( tt.ID )
         self.consome( tt.CLOSEPAR )
         self.consome( tt.PTOVIRG )
 

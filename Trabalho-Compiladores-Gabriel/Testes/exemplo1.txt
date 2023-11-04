@@ -10,9 +10,9 @@ VAR x,y: int;
     y = x;
     b = true;
     while(b)
-    { 
+    {
         if(y>10)
-        { 
+        {
              write(y);
         }
         else
