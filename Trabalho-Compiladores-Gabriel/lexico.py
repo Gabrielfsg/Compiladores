@@ -100,6 +100,7 @@ class TipoToken:
     VIRG = (34, ',')
     DPONTOS = (34, ':')
     CADEIA = (35, 'cadeia')
+    NEGACAO = (36, '!')
 
 class Token:
     def __init__(self, tipo, lexema, linha):
@@ -180,10 +181,12 @@ class Lexico:
                     estado = 2
                 elif car.isdigit():
                     estado = 3
-                elif car in {'=', ';', '+', '*', '-', '(', ')', ',', ':','{','}'}:
+                elif car in {'=', ';', '+', '*', '-', ')', ',', ':','{','}'}:
                     estado = 4
                 elif car == '/':
                     estado = 5
+                elif car == '(':
+                    estado = 7
                 else:
                     return Token(TipoToken.ERROR, '<' + car + '>', self.linha)
             elif estado == 2:
@@ -269,6 +272,8 @@ class Lexico:
                             self.linha += 1
                 self.ungetChar(car)
                 estado = 1
+            elif estado == 7:
+                
 
 
 

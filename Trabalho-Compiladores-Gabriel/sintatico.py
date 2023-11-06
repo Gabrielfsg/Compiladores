@@ -43,7 +43,7 @@ class Sintatico:
             self.lex.abreArquivo()
             self.tokenAtual = self.lex.getToken()
 
-            self.F()
+            self.Prog()
             self.consome( tt.FIMARQ )
 
             self.lex.fechaArquivo()
@@ -182,9 +182,38 @@ class Sintatico:
         self.consome(tt.PTOVIRG)
 
     def Expr(self):
-
+        self.Simples()
+        self.P()
 
     def List_W(self):
+        self.Elemem_W()
+        self.L()
+
+    def P(self):
+        if self.atualIgual(tt.IGUAL):
+            self.consome(tt.IGUAL)
+            self.Simples()
+        elif self.atualIgual(tt.MAIOR):
+            self.consome(tt.MAIOR)
+            self.Simples()
+        elif self.atualIgual(tt.MENOR):
+            self.consome(tt.MENOR)
+            self.Simples()
+        elif self.atualIgual(tt.MAIORIGUAL):
+            self.consome(tt.MAIORIGUAL)
+            self.Simples()
+        elif self.atualIgual(tt.MENORIGUAL):
+            self.consome(tt.MENORIGUAL)
+            self.Simples()
+        elif self.atualIgual(tt.DIFERENTE):
+            self.consome(tt.DIFERENTE)
+            self.Simples()
+        else:
+            pass
+
+    def Simples(self):
+        self.Termo()
+        self.R()
 
     def L(self):
         if self.atualIgual(tt.VIRG):
@@ -197,78 +226,51 @@ class Sintatico:
             self.consome(tt.CADEIA)
         else:
             self.Expr()
-    ########################################
 
-    def F(self):
-        self.C()
-        self.Rf()
+    def Termo(self):
+        self.Fat()
+        self.S()
 
-    def Rf(self):
-        if self.atualIgual( tt.FIMARQ ):
+    def S(self):
+        if self.atualIgual(tt.MULT):
+            self.consome(tt.MULT)
+            self.Simples()
+        elif self.atualIgual(tt.DIV):
+            self.consome(tt.DIV)
+            self.Simples()
+        else:
             pass
-        else:
-            self.C()
-            self.Rf()
-
-    def C(self):
-        if self.atualIgual( tt.READ ):
-            self.R()
-        elif self.atualIgual( tt.WRITE ):
-            self.P()
-        else:
-            self.A()
-
-    def A(self):
-        self.consome( tt.ID )
-        self.consome( tt.ATRIB )
-        self.E()
-        self.consome( tt.PTOVIRG )
-
     def R(self):
-        self.consome( tt.READ )
-        self.consome( tt.OPENPAR )
-        self.consome( tt.ID )
-        self.consome( tt.CLOSEPAR )
-        self.consome( tt.PTOVIRG )
-
-    def P(self):
-        self.consome( tt.WRITE )
-        self.consome( tt.OPENPAR )
-        self.consome( tt.ID )
-        self.consome( tt.CLOSEPAR )
-        self.consome( tt.PTOVIRG )
-
-    def E(self):
-        self.M()
-        self.Rs()
-
-    def Rs(self):
-        if self.atualIgual( tt.ADD ):
-            self.consome( tt.ADD )
-            self.M()
-            self.Rs()
+        if self.atualIgual(tt.ADD):
+            self.consome(tt.ADD)
+            self.Simples()
+        elif self.atualIgual(tt.SUB):
+            self.consome(tt.SUB)
+            self.Simples()
         else:
             pass
+        
+    def Fat(self):
+        if self.atualIgual(tt.ID):
+            self.consome(tt.ID)
+        if self.atualIgual(tt.NUM):
+            self.consome(tt.NUM)
+        if self.consome(tt.OPENPAR):
+            self.consome(tt.OPENPAR)
+            self.Expr()
+            self.consome(tt.CLOSEPAR)
+        if self.atualIgual(tt.TRUE):
+            self.consome(tt.TRUE)
+        if self.atualIgual(tt.FALSE):
+            self.consome(tt.FALSE)
+        if self.atualIgual(tt.NEGACAO):
+            self.consome(tt.NEGACAO)
+            self.Fat()
 
-    def M(self):
-        self.Op()
-        self.Rm()
 
-    def Rm(self):
-        if self.atualIgual( tt.MULT ):
-            self.consome( tt.MULT )
-            self.Op()
-            self.Rm()
-        else:
-            pass
 
-    def Op(self):
-        if self.atualIgual( tt.OPENPAR ):
-            self.consome( tt.OPENPAR )
-            self.E()
-            self.consome( tt.CLOSEPAR )
-        else:
-            self.consome( tt.NUM )
+
+    ########################################
 
 if __name__== "__main__":
 
