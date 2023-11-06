@@ -99,6 +99,7 @@ class TipoToken:
     FECHACH = (33, '}')
     VIRG = (34, ',')
     DPONTOS = (34, ':')
+    CADEIA = (35, 'cadeia')
 
 class Token:
     def __init__(self, tipo, lexema, linha):

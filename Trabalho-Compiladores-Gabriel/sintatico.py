@@ -95,12 +95,108 @@ class Sintatico:
         else:
             pass
 
+    def Decls_Tipo(self):
+        self.List_Id()
+        self.consome(tt.DPONTOS)
+        self.Tipo()
+        self.consome(tt.PTOVIRG)
+
     def List_Decls(self):
+        self.Decls_Tipo()
+        self.D()
 
     def Lista_Comandos(self):
+        self.Comandos()
+        self.G()
+
+    def Comandos(self):
+        if self.atualIgual(tt.IF):
+            self.consome(tt.IF)
+        elif self.atualIgual(tt.ELSE):
+            self.consome(tt.ELSE)
+        elif self.atualIgual(tt.READ):
+            self.consome(tt.READ)
+        elif self.atualIgual(tt.WRITE):
+            self.consome(tt.WRITE)
+        else:
+            self.consome(tt.ATRIB)
+
+    def G(self):
+        if self.atualIgual(tt.IF) or self.atualIgual(tt.ELSE) or self.atualIgual(tt.READ) or self.atualIgual(tt.WRITE) or self.atualIgual(tt.ATRIB):
+            self.Comandos()
+        else:
+            pass
 
 
+    def List_Id(self):
+        self.consome(tt.ID)
+        self.E()
 
+    def E(self):
+        if self.atualIgual(tt.VIRG):
+            self.consome(tt.VIRG)
+            self.List_Id()
+        else:
+            pass
+
+    def Se(self):
+        self.consome(tt.IF)
+        self.consome(tt.OPENPAR)
+        self.Expr()
+        self.consome(tt.CLOSEPAR)
+        self.C_Comp()
+        self.H()
+
+    def H(self):
+        if self.atualIgual(tt.ELSE):
+            self.consome(tt.ELSE)
+            self.C_Comp()
+        else:
+            pass
+
+    def Enquanto(self):
+        self.consome(tt.WHILE)
+        self.consome(tt.OPENPAR)
+        self.Expr()
+        self.consome(tt.CLOSEPAR)
+        self.C_Comp()
+
+    def Leia(self):
+        self.consome(tt.READ)
+        self.consome(tt.OPENPAR)
+        self.List_Id()
+        self.consome(tt.CLOSEPAR)
+        self.consome(tt.PTOVIRG)
+
+    def Atribuicao(self):
+        self.consome(tt.ID)
+        self.consome(tt.ATRIB)
+        self.Expr()
+        self.consome(tt.PTOVIRG)
+
+    def Escreva(self):
+        self.consome(tt.WRITE)
+        self.consome(tt.OPENPAR)
+        self.List_W()
+        self.consome(tt.CLOSEPAR)
+        self.consome(tt.PTOVIRG)
+
+    def Expr(self):
+
+
+    def List_W(self):
+
+    def L(self):
+        if self.atualIgual(tt.VIRG):
+            self.consome(tt.VIRG)
+            self.List_W()
+        else:
+            pass
+    def Elemem_W(self):
+        if self.atualIgual(tt.CADEIA):
+            self.consome(tt.CADEIA)
+        else:
+            self.Expr()
     ########################################
 
     def F(self):
