@@ -70,10 +70,10 @@ class Sintatico:
             quit()
 
     def S(self):
-        if self.atualIgual(tt.PROGRAM):
-            self.Prog()
-        else:
+        if self.atualIgual(tt.FIMARQ):
             pass
+        else:
+            self.Prog()
 
     def Prog(self):
         self.consome(tt.PROGRAM)
