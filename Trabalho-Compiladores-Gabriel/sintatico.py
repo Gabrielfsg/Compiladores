@@ -1,29 +1,37 @@
 """
-
- Linguagem Toy
+    Linguagem Z
 
     Gramatica::
 
-    F* --> C Rf
-    Rf --> C Rf | lambda
-    C  --> A | R | P
-    A --> ident = E ;
-    R --> read ( ident ) ;
-    P --> print ( ident ) ;
-
-    E --> M Rs
-    Rs --> + M Rs | lambda
-    M --> Op Rm
-    Rm --> * Op Rm | lambda
-    Op --> ( E ) | num
-
-    Tokens::
-
-    IDENT ATRIB READ PTOVIRG PRINT ADD MULT OPENPAR CLOSEPAR NUM ERROR FIMARQ
-
-    Comentarios::
-
-    iniciam com # ate o fim da linha
+    P= {
+    PROG → program id pvirg DECLS C-COMP
+    DECLS →  | var LIST-DECLS
+    LIST-DECLS → DECL-TIPO D
+    D →  | LIST-DECLS
+    DECL-TIPO → LIST-ID dpontos TIPO pvirg
+    LIST-ID → id E
+    E →  | virg LIST-ID
+    TIPO → int | real | bool | char
+    C-COMP → abrech LISTA-COMANDOS fechach
+    LISTA-COMANDOS → COMANDOS G
+    G →  | LISTA-COMANDOS
+    COMANDOS → SE | ENQUANTO | LEIA | ESCREVA | ATRIBUICAO
+    SE → if abrepar EXPR fechapar C-COMP H
+    H →  | else C-COMP
+    ENQUANTO → while abrepar EXPR fechapar C-COMP
+    LEIA → read abrepar LIST-ID fechapar pvirg
+    ATRIBUICAO → id atrib EXPR pvirg
+    ESCREVA → write abrepar LIST-W fechapar pvirg
+    LIST-W → ELEM-W L
+    L →  | virg LIST-W
+    ELEM-W → EXPR | cadeia
+    EXPR → SIMPLES P
+    P →  | oprel SIMPLES
+    SIMPLES → TERMO R
+    R →  | opad SIMPLES
+    TERMO → FAT S
+    S →  | opmul TERMO
+    FAT → id | cte | abrepar EXPR fechapar | true | false | opneg FAT}
 
 """
 
@@ -43,7 +51,7 @@ class Sintatico:
             self.lex.abreArquivo()
             self.tokenAtual = self.lex.getToken()
 
-            self.Prog()
+            self.S()
             self.consome( tt.FIMARQ )
 
             self.lex.fechaArquivo()
@@ -60,6 +68,12 @@ class Sintatico:
             print('ERRO DE SINTAXE [linha %d]: era esperado "%s" mas veio "%s"'
                % (self.tokenAtual.linha, msg, self.tokenAtual.lexema))
             quit()
+
+    def S(self):
+        if self.atualIgual(tt.PROGRAM):
+            self.Prog()
+        else:
+            pass
 
     def Prog(self):
         self.consome(tt.PROGRAM)
@@ -275,6 +289,6 @@ class Sintatico:
 if __name__== "__main__":
 
    #nome = input("Entre com o nome do arquivo: ")
-   nome = 'exemplo.toy'
+   nome = 'Testes/exemplo11.txt'
    parser = Sintatico()
    parser.interprete(nome)

@@ -1,30 +1,4 @@
 """
-
- Linguagem Toy
-
-    Gramatica::
-
-    F* --> C F | C
-    C  --> A | R | P
-    A --> ident = E ;
-    R --> read ( ident ) ;
-    P --> print ( ident ) ;
-
-    E --> M Rs
-    Rs --> + M Rs | lambda
-    M --> Op Rm
-    Rm --> * Op Rm | lambda
-    Op --> ( E ) | num
-
-    Tokens::
-
-    IDENT ATRIB READ PTOVIRG PRINT ADD MULT OPENPAR CLOSEPAR NUM ERROR FIMARQ
-
-    Comentarios::
-
-    iniciam com # ate o fim da linha
-
-
     Linguagem Z
 
     Gramatica::
@@ -181,11 +155,11 @@ class Lexico:
                     estado = 2
                 elif car.isdigit():
                     estado = 3
-                elif car in {'=', ';', '+', '*', '-', ')', ',', ':','{','}'}:
+                elif car in {'=', ';', '+', '*', '-', ')','(', ',', ':','{','}','>','<','>=','<=','<>'}:
                     estado = 4
                 elif car == '/':
                     estado = 5
-                elif car == '(':
+                elif car == '"':
                     estado = 7
                 else:
                     return Token(TipoToken.ERROR, '<' + car + '>', self.linha)
@@ -273,14 +247,21 @@ class Lexico:
                 self.ungetChar(car)
                 estado = 1
             elif estado == 7:
-                
+                lexema = lexema + car
+                car = self.getChar()
+                if (car == '"'):
+                    # terminou o nome
+                    lexema = lexema + car
+                    return Token(TipoToken.CADEIA, lexema, self.linha)
+                if car == '\n':
+                    return Token(TipoToken.ERROR, '<' + lexema + '>', self.linha)
 
 
 
 if __name__== "__main__":
 
    #nome = input("Entre com o nome do arquivo: ")
-   nome = 'Testes/exemplo1.txt'
+   nome = 'Testes/exemplo5.txt'
    lex = Lexico(nome)
    lex.abreArquivo()
 
