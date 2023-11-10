@@ -36,6 +36,7 @@
 """
 
 from os import path
+import re
 
 class TipoToken:
     ID = (1, 'id')
@@ -167,23 +168,25 @@ class Lexico:
                     estado = 5
                 elif car == '"':
                     estado = 7
-                elif car == '+' or '-':
+                elif car == '+' or car == '-':
                     estado = 9
                 else:
                     return Token(TipoToken.ERROR, '<' + car + '>', self.linha)
             elif estado == 2:
-                # estado que trata nomes (identificadores ou palavras reservadas)
-                lexema = lexema + car
-                car = self.getChar()
-                if car is None or car == ' ' or not car.isalnum():
-                    # terminou o nome
-                    self.ungetChar(car)
-                    if lexema in Lexico.reservadas:
-                        return Token(Lexico.reservadas[lexema], lexema, self.linha)
-                    else:
-                        return Token(TipoToken.ID, lexema, self.linha)
-                elif car.isalpha():
-                    estado = 10
+                if not re.match(r'^[a-zA-Z]$', car):
+                    estado = 11
+                else:
+                    lexema = lexema + car
+                    car = self.getChar()
+                    if car is None or car == ' ' or not car.isalnum():
+                        # terminou o nome
+                        self.ungetChar(car)
+                        if lexema in Lexico.reservadas:
+                            return Token(Lexico.reservadas[lexema], lexema, self.linha)
+                        else:
+                            return Token(TipoToken.ID, lexema, self.linha)
+                    elif car.isalpha():
+                        estado = 10
             elif estado == 3:
                 # estado que trata numeros inteiros
                 lexema = lexema + car
@@ -265,7 +268,7 @@ class Lexico:
                     lexema = lexema + car
                     return Token(TipoToken.CADEIA, lexema, self.linha)
                 if car is None:
-                    return Token(TipoToken.ERROR, '<' + lexema + '>', self.linha)
+                    return Token(TipoToken.ERROR, '<As aspas n foram fechadas.>', self.linha)
             elif estado == 8:
                 lexema = lexema + car
                 car = self.getChar()
@@ -282,16 +285,25 @@ class Lexico:
                 else:
                     estado = 4
             elif estado == 10:
+                if not re.match(r'^[a-zA-Z0-9]$', car):
+                    estado = 11
+                else:
+                    lexema = lexema + car
+                    car = self.getChar()
+                    if car is None or car == ' ' or not car.isalnum():
+                        self.ungetChar(car)
+                        if len(lexema) > 32:
+                            return Token(TipoToken.ERROR, '<' + lexema + ', Id com mais de 32 caracteres.' + '>',self.linha)
+                        elif lexema in Lexico.reservadas:
+                            return Token(Lexico.reservadas[lexema], lexema, self.linha)
+                        else:
+                            return Token(TipoToken.ID, lexema, self.linha)
+            elif estado == 11:
                 lexema = lexema + car
-                if len(lexema) > 32:
-                    return Token(TipoToken.ERROR, '<' + lexema + ', Id com mais de 32 caracteres.' + '>', self.linha)
                 car = self.getChar()
-                if car is None or car == ' ' or not car.isalnum():
-                    self.ungetChar(car)
-                    if lexema in Lexico.reservadas:
-                        return Token(Lexico.reservadas[lexema], lexema, self.linha)
-                    else:
-                        return Token(TipoToken.ID, lexema, self.linha)
+                if car is None or car == ' ':
+                    return Token(TipoToken.ERROR, '<' + lexema + ', Id invalido.' + '>', self.linha)
+
 
 
 
@@ -300,7 +312,7 @@ class Lexico:
 if __name__== "__main__":
 
    #nome = input("Entre com o nome do arquivo: ")
-   nome = 'Testes/exemplo16.txt'
+   nome = 'Testes/exemplo2.txt'
    lex = Lexico(nome)
    lex.abreArquivo()
 

@@ -262,6 +262,6 @@ class Sintatico:
 
 if __name__ == "__main__":
     # nome = input("Entre com o nome do arquivo: ")
-    nome = 'Testes/exemplo2.txt'
+    nome = 'Testes/exemplo15.txt'
     parser = Sintatico()
     parser.interprete(nome)
