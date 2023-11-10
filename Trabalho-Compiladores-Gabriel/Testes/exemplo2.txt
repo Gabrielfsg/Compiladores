@@ -8,9 +8,9 @@ VAR x,y: int;
 {
     write("Digite um numero:");
     read(x);
-    y = çx;
+    y = ï¿½x;
     b = true;
-    while(b)  /* comentário aberto e não fechado
+    while(b)  /* comentï¿½rio aberto e nï¿½o fechado
     { 
         if(y>10)
         { 

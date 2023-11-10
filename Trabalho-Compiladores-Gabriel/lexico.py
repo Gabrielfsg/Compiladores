@@ -48,7 +48,7 @@ class TipoToken:
     OPMUL = (8, 'os operadores * e /')
     OPENPAR = (9, '(')
     CLOSEPAR = (10, ')')
-    NUM = (11, 'numero')
+    CTE = (11, 'cte')
     ERROR = (12, 'erro')
     FIMARQ = (13, 'fim-de-arquivo')
     PROGRAM = (14, 'program')
@@ -68,7 +68,6 @@ class TipoToken:
     DPONTOS = (28, ':')
     CADEIA = (29, 'cadeia')
     OPNEG = (30, '!')
-    NUMREAL = (31, 'real')
 
 class Token:
     def __init__(self, tipo, lexema, linha):
@@ -145,13 +144,6 @@ class Lexico:
         self.ungetChar(carNext)
         return car, lexema
 
-    def resOrId(self, car, lexema):
-        self.ungetChar(car)
-        if lexema in Lexico.reservadas:
-            return Token(Lexico.reservadas[lexema], lexema, self.linha)
-        else:
-            return Token(TipoToken.ID, lexema, self.linha)
-
     def getToken(self):
         lexema = ''
         estado = 1
@@ -183,10 +175,14 @@ class Lexico:
                 # estado que trata nomes (identificadores ou palavras reservadas)
                 lexema = lexema + car
                 car = self.getChar()
-                if car is None or car is '':
+                if car is None or car == ' ' or not car.isalnum():
                     # terminou o nome
-                    self.resOrId()
-                elif car.isdigit():
+                    self.ungetChar(car)
+                    if lexema in Lexico.reservadas:
+                        return Token(Lexico.reservadas[lexema], lexema, self.linha)
+                    else:
+                        return Token(TipoToken.ID, lexema, self.linha)
+                elif car.isalpha():
                     estado = 10
             elif estado == 3:
                 # estado que trata numeros inteiros
@@ -197,7 +193,7 @@ class Lexico:
                         estado = 8
                     else:
                         self.ungetChar(car)
-                        return Token(TipoToken.NUM, lexema, self.linha)
+                        return Token(TipoToken.CTE, lexema, self.linha)
             elif estado == 4:
                 # estado que trata outros tokens primitivos comuns
                 car, lexema = self.desempilhaLetra(car,lexema)
@@ -275,8 +271,8 @@ class Lexico:
                 car = self.getChar()
                 if not car.isalnum():
                     return Token(TipoToken.ERROR, '<' + lexema + '>', self.linha)
-                elif car is '' or car is None:
-                    return Token(TipoToken.NUMREAL, lexema, self.linha)
+                elif car == '' or car is None:
+                    return Token(TipoToken.CTE, lexema, self.linha)
             elif estado == 9:
                 car = car + self.getChar()
                 carAux = car[1:]
@@ -287,11 +283,15 @@ class Lexico:
                     estado = 4
             elif estado == 10:
                 lexema = lexema + car
+                if len(lexema) > 32:
+                    return Token(TipoToken.ERROR, '<' + lexema + ', Id com mais de 32 caracteres.' + '>', self.linha)
                 car = self.getChar()
-                if car is None or not car == '':
-                    self.resOrId()
-                elif not car.isalnum() or not car.isdigit():
-                    return Token(TipoToken.ERROR, '<' + lexema + '>', self.linha)
+                if car is None or car == ' ' or not car.isalnum():
+                    self.ungetChar(car)
+                    if lexema in Lexico.reservadas:
+                        return Token(Lexico.reservadas[lexema], lexema, self.linha)
+                    else:
+                        return Token(TipoToken.ID, lexema, self.linha)
 
 
 
