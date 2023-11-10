@@ -43,38 +43,32 @@ class TipoToken:
     READ = (3, 'read')
     PTOVIRG = (4, ';')
     WRITE = (5, 'write')
-    ADD = (6, '+')
-    MULT = (7, '*')
-    OPENPAR = (8, '(')
-    CLOSEPAR = (9, ')')
-    NUM = (10, 'numero')
-    ERROR = (11, 'erro')
-    FIMARQ = (12, 'fim-de-arquivo')
-    PROGRAM = (13, 'program')
-    IF = (14, 'if')
-    ELSE = (15, 'else')
-    VAR = (16, 'var')
-    INT = (17, 'int')
-    REAL = (18, 'real')
-    BOOL = (19, 'bool')
-    CHAR = (20, 'char')
-    WHILE = (21, 'while')
-    FALSE = (22, 'false')
-    TRUE = (23, 'true')
-    IGUAL = (24, '==')
-    MAIOR = (25, '>')
-    MENOR = (26, '<')
-    MAIORIGUAL = (27, '>=')
-    MENORIGUAL = (28, '<=')
-    DIFERENTE = (29, '<>')
-    SUB = (30, '-')
-    DIV = (31, '/')
-    ABRECH = (32, '{')
-    FECHACH = (33, '}')
-    VIRG = (34, ',')
-    DPONTOS = (34, ':')
-    CADEIA = (35, 'cadeia')
-    NEGACAO = (36, '!')
+    OPREL = (6, 'operadores relacionais ==, <, >, <=, >=, <>')
+    OPAD = (7, 'os operadores + e -')
+    OPMUL = (8, 'os operadores * e /')
+    OPENPAR = (9, '(')
+    CLOSEPAR = (10, ')')
+    NUM = (11, 'numero')
+    ERROR = (12, 'erro')
+    FIMARQ = (13, 'fim-de-arquivo')
+    PROGRAM = (14, 'program')
+    IF = (15, 'if')
+    ELSE = (16, 'else')
+    VAR = (17, 'var')
+    INT = (18, 'int')
+    REAL = (19, 'real')
+    BOOL = (20, 'bool')
+    CHAR = (21, 'char')
+    WHILE = (22, 'while')
+    FALSE = (23, 'false')
+    TRUE = (24, 'true')
+    ABRECH = (25, '{')
+    FECHACH = (26, '}')
+    VIRG = (27, ',')
+    DPONTOS = (28, ':')
+    CADEIA = (29, 'cadeia')
+    OPNEG = (30, '!')
+    NUMREAL = (31, 'real')
 
 class Token:
     def __init__(self, tipo, lexema, linha):
@@ -138,6 +132,26 @@ class Lexico:
         if not c is None:
             self.buffer = self.buffer + c
 
+    def desempilhaLetra(self,car, lexema):
+        carNext = car[1:]
+        car = car[0]
+        lexema = lexema + car
+        self.ungetChar(carNext)
+        return car, lexema
+
+    def desempilhaLetraV2(self,car, lexema):
+        carNext = car[1:]
+        car = car[0]
+        self.ungetChar(carNext)
+        return car, lexema
+
+    def resOrId(self, car, lexema):
+        self.ungetChar(car)
+        if lexema in Lexico.reservadas:
+            return Token(Lexico.reservadas[lexema], lexema, self.linha)
+        else:
+            return Token(TipoToken.ID, lexema, self.linha)
+
     def getToken(self):
         lexema = ''
         estado = 1
@@ -155,55 +169,54 @@ class Lexico:
                     estado = 2
                 elif car.isdigit():
                     estado = 3
-                elif car in {'=', ';', '+', '*', '-', ')','(', ',', ':','{','}','>','<','>=','<=','<>'}:
+                elif car in {'=', ';', ')','(', ',', ':','{','}','>','<','>=','<=','<>'}:
                     estado = 4
                 elif car == '/':
                     estado = 5
                 elif car == '"':
                     estado = 7
+                elif car == '+' or '-':
+                    estado = 9
                 else:
                     return Token(TipoToken.ERROR, '<' + car + '>', self.linha)
             elif estado == 2:
                 # estado que trata nomes (identificadores ou palavras reservadas)
                 lexema = lexema + car
                 car = self.getChar()
-                if car is None or (not car.isalnum()):
+                if car is None or car is '':
                     # terminou o nome
-                    self.ungetChar(car)
-                    if lexema in Lexico.reservadas:
-                        return Token(Lexico.reservadas[lexema], lexema, self.linha)
-                    else:
-                        return Token(TipoToken.ID, lexema, self.linha)
+                    self.resOrId()
+                elif car.isdigit():
+                    estado = 10
             elif estado == 3:
                 # estado que trata numeros inteiros
                 lexema = lexema + car
                 car = self.getChar()
                 if car is None or (not car.isdigit()):
-                    # terminou o numero
-                    self.ungetChar(car)
-                    return Token(TipoToken.NUM, lexema, self.linha)
+                    if car == '.':
+                        estado = 8
+                    else:
+                        self.ungetChar(car)
+                        return Token(TipoToken.NUM, lexema, self.linha)
             elif estado == 4:
                 # estado que trata outros tokens primitivos comuns
-                carNext = car[1:]
-                car = car[0]
-                lexema = lexema + car
-                self.ungetChar(carNext)
+                car, lexema = self.desempilhaLetra(car,lexema)
                 if car == '=':
                     return Token(TipoToken.ATRIB, lexema, self.linha)
                 elif car == ';':
                     return Token(TipoToken.PTOVIRG, lexema, self.linha)
                 elif car == '+':
-                    return Token(TipoToken.ADD, lexema, self.linha)
+                    return Token(TipoToken.OPAD, lexema, self.linha)
                 elif car == ':':
                     return Token(TipoToken.DPONTOS, lexema, self.linha)
                 elif car == ',':
                     return Token(TipoToken.VIRG, lexema, self.linha)
                 elif car == '*':
-                    return Token(TipoToken.MULT, lexema, self.linha)
+                    return Token(TipoToken.OPMUL, lexema, self.linha)
                 elif car == '-':
-                    return Token(TipoToken.SUB, lexema, self.linha)
+                    return Token(TipoToken.OPAD, lexema, self.linha)
                 elif car == '/':
-                    return Token(TipoToken.DIV, lexema, self.linha)
+                    return Token(TipoToken.OPMUL, lexema, self.linha)
                 elif car == '(':
                     return Token(TipoToken.OPENPAR, lexema, self.linha)
                 elif car == ')':
@@ -213,15 +226,15 @@ class Lexico:
                 elif car == '}':
                     return Token(TipoToken.FECHACH, lexema, self.linha)
                 elif car == '>':
-                    return Token(TipoToken.MAIOR, lexema, self.linha)
+                    return Token(TipoToken.OPREL, lexema, self.linha)
                 elif car == '<':
-                    return Token(TipoToken.MENOR, lexema, self.linha)
+                    return Token(TipoToken.OPREL, lexema, self.linha)
                 elif car == '>=':
-                    return Token(TipoToken.MAIORIGUAL, lexema, self.linha)
+                    return Token(TipoToken.OPREL, lexema, self.linha)
                 elif car == '<=':
-                    return Token(TipoToken.MENORIGUAL, lexema, self.linha)
+                    return Token(TipoToken.OPREL, lexema, self.linha)
                 elif car == '<>':
-                    return Token(TipoToken.DIFERENTE, lexema, self.linha)
+                    return Token(TipoToken.OPREL, lexema, self.linha)
             elif estado == 5:
                 car = car + self.getChar()
                 carAux = car[1:]
@@ -244,6 +257,8 @@ class Lexico:
                                 car = self.getChar()
                         if car == '\n':
                             self.linha += 1
+                        if car is None:
+                            return Token(TipoToken.ERROR, '</*>', self.linha)
                 self.ungetChar(car)
                 estado = 1
             elif estado == 7:
@@ -253,15 +268,39 @@ class Lexico:
                     # terminou o nome
                     lexema = lexema + car
                     return Token(TipoToken.CADEIA, lexema, self.linha)
-                if car == '\n':
+                if car is None:
                     return Token(TipoToken.ERROR, '<' + lexema + '>', self.linha)
+            elif estado == 8:
+                lexema = lexema + car
+                car = self.getChar()
+                if not car.isalnum():
+                    return Token(TipoToken.ERROR, '<' + lexema + '>', self.linha)
+                elif car is '' or car is None:
+                    return Token(TipoToken.NUMREAL, lexema, self.linha)
+            elif estado == 9:
+                car = car + self.getChar()
+                carAux = car[1:]
+                if carAux.isalnum():
+                    car, lexema = self.desempilhaLetraV2(car,lexema)
+                    estado = 2
+                else:
+                    estado = 4
+            elif estado == 10:
+                lexema = lexema + car
+                car = self.getChar()
+                if car is None or not car == '':
+                    self.resOrId()
+                elif not car.isalnum() or not car.isdigit():
+                    return Token(TipoToken.ERROR, '<' + lexema + '>', self.linha)
+
+
 
 
 
 if __name__== "__main__":
 
    #nome = input("Entre com o nome do arquivo: ")
-   nome = 'Testes/exemplo5.txt'
+   nome = 'Testes/exemplo16.txt'
    lex = Lexico(nome)
    lex.abreArquivo()
 

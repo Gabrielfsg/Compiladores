@@ -204,23 +204,8 @@ class Sintatico:
         self.L()
 
     def P(self):
-        if self.atualIgual(tt.IGUAL):
-            self.consome(tt.IGUAL)
-            self.Simples()
-        elif self.atualIgual(tt.MAIOR):
-            self.consome(tt.MAIOR)
-            self.Simples()
-        elif self.atualIgual(tt.MENOR):
-            self.consome(tt.MENOR)
-            self.Simples()
-        elif self.atualIgual(tt.MAIORIGUAL):
-            self.consome(tt.MAIORIGUAL)
-            self.Simples()
-        elif self.atualIgual(tt.MENORIGUAL):
-            self.consome(tt.MENORIGUAL)
-            self.Simples()
-        elif self.atualIgual(tt.DIFERENTE):
-            self.consome(tt.DIFERENTE)
+        if self.atualIgual(tt.OPREL):
+            self.consome(tt.OPREL)
             self.Simples()
         else:
             pass
@@ -246,20 +231,14 @@ class Sintatico:
         self.S()
 
     def S(self):
-        if self.atualIgual(tt.MULT):
-            self.consome(tt.MULT)
-            self.Simples()
-        elif self.atualIgual(tt.DIV):
-            self.consome(tt.DIV)
+        if self.atualIgual(tt.OPMUL):
+            self.consome(tt.OPMUL)
             self.Simples()
         else:
             pass
     def R(self):
-        if self.atualIgual(tt.ADD):
-            self.consome(tt.ADD)
-            self.Simples()
-        elif self.atualIgual(tt.SUB):
-            self.consome(tt.SUB)
+        if self.atualIgual(tt.OPAD):
+            self.consome(tt.OPAD)
             self.Simples()
         else:
             pass
@@ -277,8 +256,8 @@ class Sintatico:
             self.consome(tt.TRUE)
         if self.atualIgual(tt.FALSE):
             self.consome(tt.FALSE)
-        if self.atualIgual(tt.NEGACAO):
-            self.consome(tt.NEGACAO)
+        if self.atualIgual(tt.OPNEG):
+            self.consome(tt.OPNEG)
             self.Fat()
 
 

@@ -1,4 +1,3 @@
-//Programa sem erros
-/*teste
-123 */
-program exemplo16;
+27
+4.13
+51.
