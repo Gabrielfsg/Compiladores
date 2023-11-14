@@ -273,9 +273,11 @@ class Lexico:
                 lexema = lexema + car
                 car = self.getChar()
                 if not car.isalnum():
-                    return Token(TipoToken.ERROR, '<' + lexema + '>', self.linha)
-                elif car == '' or car is None:
-                    return Token(TipoToken.CTE, lexema, self.linha)
+                    self.ungetChar(car)
+                    if car == '' or car is None or car in {'=', ';', ')','(', ',', ':','{','}','>','<','>=','<=','<>'}:
+                        return Token(TipoToken.CTE, lexema, self.linha)
+                    else:
+                        return Token(TipoToken.ERROR, '<' + lexema + '>', self.linha)
             elif estado == 9:
                 car = car + self.getChar()
                 carAux = car[1:]
@@ -312,7 +314,7 @@ class Lexico:
 if __name__== "__main__":
 
    #nome = input("Entre com o nome do arquivo: ")
-   nome = 'Testes/exemplo2.txt'
+   nome = 'Testes/exemplo1.txt'
    lex = Lexico(nome)
    lex.abreArquivo()
 

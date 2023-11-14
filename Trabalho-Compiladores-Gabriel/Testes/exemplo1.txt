@@ -8,6 +8,7 @@ VAR x,y: int;
     write("Digite um numero:");
     read(x);
     y = x;
+    r = 5.12;
     b = true;
     while(b)
     {
