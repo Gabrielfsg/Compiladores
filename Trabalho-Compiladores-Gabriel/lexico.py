@@ -191,12 +191,14 @@ class Lexico:
                 # estado que trata numeros inteiros
                 lexema = lexema + car
                 car = self.getChar()
-                if car is None or (not car.isdigit()):
+                if not car.isdigit():
                     if car == '.':
                         estado = 8
-                    else:
+                    elif car in {'=', ';', ')','(', ',', ':','{','}','>','<','>=','<=','<>'} or car is None or car == ' ':
                         self.ungetChar(car)
                         return Token(TipoToken.CTE, lexema, self.linha)
+                    else:
+                        estado = 11
             elif estado == 4:
                 # estado que trata outros tokens primitivos comuns
                 car, lexema = self.desempilhaLetra(car,lexema)
@@ -273,11 +275,11 @@ class Lexico:
                 lexema = lexema + car
                 car = self.getChar()
                 if not car.isalnum():
-                    self.ungetChar(car)
-                    if car == '' or car is None or car in {'=', ';', ')','(', ',', ':','{','}','>','<','>=','<=','<>'}:
+                    if car == ' ' or car is None or car in {'=', ';', ')','(', ',', ':','{','}','>','<','>=','<=','<>'}:
+                        self.ungetChar(car)
                         return Token(TipoToken.CTE, lexema, self.linha)
                     else:
-                        return Token(TipoToken.ERROR, '<' + lexema + '>', self.linha)
+                        estado = 11
             elif estado == 9:
                 car = car + self.getChar()
                 carAux = car[1:]
