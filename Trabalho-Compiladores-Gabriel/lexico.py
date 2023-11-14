@@ -256,9 +256,9 @@ class Lexico:
                             carStop += car
                             if carStop == "*/":
                                 car = self.getChar()
-                        if car == '\n':
+                        elif car == '\n':
                             self.linha += 1
-                        if car is None:
+                        elif car is None:
                             return Token(TipoToken.ERROR, '</*>', self.linha)
                 self.ungetChar(car)
                 estado = 1
@@ -270,7 +270,7 @@ class Lexico:
                     lexema = lexema + car
                     return Token(TipoToken.CADEIA, lexema, self.linha)
                 if car is None:
-                    return Token(TipoToken.ERROR, '<As aspas n foram fechadas.>', self.linha)
+                    return Token(TipoToken.ERROR, '<As aspas não foram fechadas.>', self.linha)
             elif estado == 8:
                 lexema = lexema + car
                 car = self.getChar()
@@ -316,7 +316,7 @@ class Lexico:
 if __name__== "__main__":
 
    #nome = input("Entre com o nome do arquivo: ")
-   nome = 'Testes/exemplo1.txt'
+   nome = 'Testes/exemplo6.txt'
    lex = Lexico(nome)
    lex.abreArquivo()
 

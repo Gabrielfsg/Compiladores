@@ -66,8 +66,12 @@ class Sintatico:
             self.tokenAtual = self.lex.getToken()
         else:
             (const, msg) = token
-            print('ERRO DE SINTAXE [linha %d]: era esperado "%s" mas veio "%s"'
-                  % (self.tokenAtual.linha, msg, self.tokenAtual.lexema))
+            if self.tokenAtual.lexema == '<As aspas não foram fechadas.>':
+                print('ERRO DE SINTAXE [linha %d]: era esperado " Fechar Aspas ( " ) " mas veio "%s"'
+                      % (self.tokenAtual.linha,  self.tokenAtual.lexema))
+            else:
+                print('ERRO DE SINTAXE [linha %d]: era esperado "%s" mas veio "%s"'
+                      % (self.tokenAtual.linha, msg, self.tokenAtual.lexema))
             quit()
 
     def Prog(self):
@@ -262,6 +266,6 @@ class Sintatico:
 
 if __name__ == "__main__":
     # nome = input("Entre com o nome do arquivo: ")
-    nome = 'Testes/exemplo1.txt'
+    nome = 'Testes/exemplo11.txt'
     parser = Sintatico()
     parser.interprete(nome)
