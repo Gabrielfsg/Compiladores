@@ -52,7 +52,7 @@ class Sintatico:
             self.lex.abreArquivo()
             self.tokenAtual = self.lex.getToken()
 
-            self.Prog()
+            self.Init()
             self.consome(tt.FIMARQ)
 
             self.lex.fechaArquivo()
@@ -74,6 +74,12 @@ class Sintatico:
                 print('ERRO DE SINTAXE [linha %d]: era esperado "%s" mas veio "%s"'
                       % (self.tokenAtual.linha, msg, self.tokenAtual.lexema))
             quit()
+
+    def Init(self):
+        if self.atualIgual(tt.PROGRAM):
+            self.Prog()
+        else:
+            pass
 
     def Prog(self):
         self.consome(tt.PROGRAM)
@@ -267,6 +273,6 @@ class Sintatico:
 
 if __name__ == "__main__":
     # nome = input("Entre com o nome do arquivo: ")
-    nome = 'Testes/exemplo1.txt'
+    nome = 'Testes/exemplo16.txt'
     parser = Sintatico()
     parser.interprete(nome)
