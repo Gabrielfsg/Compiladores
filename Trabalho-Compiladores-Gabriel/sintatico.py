@@ -56,6 +56,7 @@ class Sintatico:
             self.consome(tt.FIMARQ)
 
             self.lex.fechaArquivo()
+            print("Programa Compilado com Sucesso.")
 
     def atualIgual(self, token):
         (const, msg) = token
@@ -266,6 +267,6 @@ class Sintatico:
 
 if __name__ == "__main__":
     # nome = input("Entre com o nome do arquivo: ")
-    nome = 'Testes/exemplo11.txt'
+    nome = 'Testes/exemplo1.txt'
     parser = Sintatico()
     parser.interprete(nome)
