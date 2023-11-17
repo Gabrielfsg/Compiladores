@@ -162,7 +162,7 @@ class Lexico:
                     estado = 2
                 elif car.isdigit():
                     estado = 3
-                elif car in {'=', ';', ')','(', ',', ':','{','}','>','<','>=','<=','<>'}:
+                elif car in {'=', ';', ')','(', ',', ':','{','}','>','<','>=','<=','<>','!'}:
                     estado = 4
                 elif car == '/':
                     estado = 5
@@ -236,6 +236,8 @@ class Lexico:
                     return Token(TipoToken.OPREL, lexema, self.linha)
                 elif car == '<>':
                     return Token(TipoToken.OPREL, lexema, self.linha)
+                elif car == '!':
+                    return Token(TipoToken.OPNEG, lexema, self.linha)
             elif estado == 5:
                 car = car + self.getChar()
                 carAux = car[1:]
