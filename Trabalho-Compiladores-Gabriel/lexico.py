@@ -261,7 +261,7 @@ class Lexico:
                         elif car == '\n':
                             self.linha += 1
                         elif car is None:
-                            return Token(TipoToken.ERROR, '</*>', self.linha)
+                            return Token(TipoToken.ERROR, '<eof>', self.linha)
                 self.ungetChar(car)
                 estado = 1
             elif estado == 7:
