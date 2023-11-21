@@ -129,8 +129,12 @@ class Sintatico:
             self.consome(tt.REAL)
         elif self.atualIgual(tt.BOOL):
             self.consome(tt.BOOL)
-        else:
+        elif self.atualIgual(tt.CHAR):
             self.consome(tt.CHAR)
+        else:
+            print('ERRO DE SINTAXE [linha %d]: era esperado um Tipo mas veio "%s"'
+              % (self.tokenAtual.linha, self.tokenAtual.lexema))
+            quit()
 
     def C_Comp(self):
         self.consome(tt.ABRECH)
@@ -273,6 +277,6 @@ class Sintatico:
 
 if __name__ == "__main__":
     # nome = input("Entre com o nome do arquivo: ")
-    nome = 'Testes/exemplo16.txt'
+    nome = 'Testes/exemplo7.txt'
     parser = Sintatico()
     parser.interprete(nome)
