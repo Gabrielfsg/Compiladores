@@ -35,14 +35,20 @@
 
 """
 
-from lexico import TipoToken as tt, Token, Lexico
+from lexico import TipoToken as tt, Lexico
+from tabela import TabelaSimbolos as tab
 
 
 class Sintatico:
 
-    def __init__(self):
+    def __init__(self,args):
         self.lex = None
         self.tokenAtual = None
+        self.modoPanico = False
+        self.deuErro = False
+        self.tokensDeSincronismo = [tt.PTOVIRG, tt.FIMARQ]
+        self.arg = args
+        self.tabelasimbolos = None
 
     def interprete(self, nomeArquivo):
         if not self.lex is None:
@@ -51,21 +57,31 @@ class Sintatico:
             self.lex = Lexico(nomeArquivo)
             self.lex.abreArquivo()
             self.tokenAtual = self.lex.getToken()
+            self.tabelasimbolos = tab
 
             self.Init()
             self.consome(tt.FIMARQ)
 
+            try:
+                if self.arg.tabela != None:
+                    open(self.arg.tabela, 'w').write(self.tabelasimbolos.__str__())
+                else:
+                    self.tabelasimbolos.__str__()
+            except Exception:
+                pass
+
             self.lex.fechaArquivo()
             print("Programa Compilado com Sucesso.")
+            return not self.deuErro
 
     def atualIgual(self, token):
         (const, msg) = token
         return self.tokenAtual.const == const
 
     def consome(self, token):
-        if self.atualIgual(token):
+        if self.atualIgual(token) and not self.modoPanico:
             self.tokenAtual = self.lex.getToken()
-        else:
+        elif not self.modoPanico:
             (const, msg) = token
             if self.tokenAtual.lexema == '<As aspas não foram fechadas.>':
                 print('ERRO DE SINTAXE [linha %d]: era esperado " Fechar Aspas ( " ) " mas veio "%s"'
@@ -73,7 +89,19 @@ class Sintatico:
             else:
                 print('ERRO DE SINTAXE [linha %d]: era esperado "%s" mas veio "%s"'
                       % (self.tokenAtual.linha, msg, self.tokenAtual.lexema))
-            quit()
+            procuraTokenDeSincronismo = True
+            while procuraTokenDeSincronismo:
+                self.tokenAtual = self.lex.getToken()
+                for tk in self.tokensDeSincronismo:
+                    (const, msg) = tk
+                    if self.tokenAtual.const == const:
+                        procuraTokenDeSincronismo = False
+                        break
+        elif self.atualIgual(token):
+            self.tokenAtual = self.lex.getToken()
+            self.modoPanico = False
+        else:
+            pass
 
     def Init(self):
         if self.atualIgual(tt.PROGRAM):
