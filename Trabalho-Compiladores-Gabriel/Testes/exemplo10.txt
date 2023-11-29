@@ -9,16 +9,16 @@ VAR x,y: int;
     read(x);
     y = x;
     b = true;
-    while(b)
+    while(b // falta fechar parenteses
     { 
         if(y>10)
         { 
-             write(y);
+             write(y) // falta ponto e vírugla aqui
         }
         else
         {
              y = y + 3;
              b = false;
-        }
+        // falta fechar chaves aqui
      }
-}
+// falta fechar chaves aqui

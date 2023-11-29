@@ -13,12 +13,12 @@ VAR x,y: int;
     { 
         if(y>10  // parênteses não fechado
         { 
-             write(y);
+             write(y; // parênteses não fechado
         }
         else
         {
-             y = y + 3;
-             b = false;
+             y = y + 3 // falta ponto e vírgula
+             b = false // falta ponto e vírgula
         }
      }
 }

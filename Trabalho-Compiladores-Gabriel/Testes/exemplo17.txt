@@ -3,4 +3,5 @@
 {
     read (x) // ausência de ponto e vírgula
     write (x);
-// ausência de fecha chaves
+}
+} // não deveria ter esta chave aqui

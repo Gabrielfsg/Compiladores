@@ -1,11 +1,14 @@
 //Erro na linha 3: falta um ID
+//Erro na linha 11: falta ponto e vírgula
+//Erro na linha 19: flata ponto e vírgula
+
 program exemplo3;
 VAR x,y,: int;
     c:   char;
     r:   real;
     b:   bool;
 {
-    write("Digite um numero:");
+    write("Digite um numero:")
     read(x);
     y = x;
     b = true;
@@ -13,7 +16,7 @@ VAR x,y,: int;
     { 
         if(y>10)
         { 
-             write(y);
+             write(y)
         }
         else
         {

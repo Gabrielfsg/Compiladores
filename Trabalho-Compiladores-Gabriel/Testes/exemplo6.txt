@@ -1,4 +1,6 @@
-/*Erro na linha 5 (ausencia de ponto e virgula)*/
+//Erro na linha 7 (ausencia de ponto e virgula)
+// Erro linha 14 falta abre parênteses
+// Erro linha 26 falta fecha chaves
 program exemplo6;
 VAR x,y: int;
     c:   char;
@@ -9,7 +11,7 @@ VAR x,y: int;
     read(x);
     y = x;
     b = true;
-    while(b)
+    whileb)
     { 
         if(y>10)
         { 
@@ -21,4 +23,3 @@ VAR x,y: int;
              b = false;
         }
      }
-}

@@ -89,6 +89,7 @@ class Lexico:
     def __init__(self, nomeArquivo):
         self.nomeArquivo = nomeArquivo
         self.arquivo = None
+        self.ungeterro = False
         # os atributos buffer e linha sao incluidos no metodo abreArquivo
 
     def abreArquivo(self):
@@ -318,9 +319,10 @@ class Lexico:
             elif estado == 11:
                 lexema = lexema + car
                 car = self.getChar()
-                if car is None or car == ' ':
+                if car == ';':
+                    self.ungetChar(car)
+                    self.ungeterro = True
                     return Token(TipoToken.ERROR, '<' + lexema + ', Id invalido.' + '>', self.linha)
-
 
 
 
@@ -329,7 +331,7 @@ class Lexico:
 if __name__== "__main__":
 
    #nome = input("Entre com o nome do arquivo: ")
-   nome = 'Testes/exemplo1.txt'
+   nome = 'Testes/exemplo3.txt'
    lex = Lexico(nome)
    lex.abreArquivo()
 

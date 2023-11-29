@@ -1,15 +1,17 @@
-//Comentario de bloco aberto e nao fechado na linha 3
+//Falta tipo da variável na linha 8
+// Ausência de ponto e vírgula na linha 10
+// Falta fecha parênteses na linha 14
 program exemplo5;
-VAR x,y: int; /* comentário aberto e não fechado
+VAR x,y: int; 
     c:   char;
     r:   real;
-    b:   bool;
+    b:   ;
 {
-    write("Digite um numero:");
+    write("Digite um numero:")
     read(x);
     y = x;
     b = true;
-    while(b)
+    while(b
     { 
         if(y>10)
         { 

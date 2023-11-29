@@ -1,6 +1,6 @@
 ### Tabela de Simbolos ###
-ID: exemplo1, Tipo: Var, Qualificacao: Identificador de Programa, Valor: program
-ID: y, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: None
-ID: c, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: None
-ID: r, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: None
-ID: b, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: None
+ID: exemplo3, Tipo: program, Qualificacao: Identificador de Programa, Valor: exemplo3
+ID: x, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: None
+ID: y, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: x
+ID: :, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: None
+ID: b, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: false

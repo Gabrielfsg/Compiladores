@@ -1,5 +1,5 @@
-//Aspas nao fechada na linha 4
+
 program exemplo11; 
 {
-   write ("TEste); 
-}
+   write ("TEste"; //falta fechar parenteses aqui
+// falta fechar chaves aqui

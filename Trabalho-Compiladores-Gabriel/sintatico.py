@@ -62,7 +62,6 @@ class Sintatico:
             self.lex.abreArquivo()
             self.tokenAtual = self.lex.getToken()
             self.tabelasimbolos = TabelaSimbolos()
-
             self.Init()
             self.consome(tt.FIMARQ)
 
@@ -75,10 +74,7 @@ class Sintatico:
                 pass
 
             self.lex.fechaArquivo()
-            if self.deuErro:
-                print("Compilação Finalizada com erros.")
-            else:
-                print("Compilação Finalizada sem erros.")
+            print("Compilação Finalizada.")
             return not self.deuErro
 
     def atualIgual(self, token):
@@ -113,7 +109,11 @@ class Sintatico:
                 for tk in self.tokensDeSincronismo:
                     (const, msg) = tk
                     if self.tokenAtual.const == const:
+                        # tokenAtual eh um token de sincronismo
                         procuraTokenDeSincronismo = False
+                        if self.lex.ungeterro:
+                            self.tokenAtual = self.lex.getToken()
+                            self.lex.ungeterro = False
                         break
         elif self.atualIgual(token):
             self.tokenAtual = self.lex.getToken()
@@ -132,7 +132,7 @@ class Sintatico:
         id = self.tokenAtual
         self.consome(tt.ID)
         self.consome(tt.PTOVIRG)
-        self.tabelasimbolos.declaraIdent(id.lexema, 'Var', 'Identificador de Programa', 'program')
+        self.tabelasimbolos.declaraIdent(id.lexema, 'program', 'Identificador de Programa', id.lexema)
         self.Decls()
         self.C_Comp()
 
@@ -160,6 +160,7 @@ class Sintatico:
         self.consome(tt.PTOVIRG)
 
     def List_Id(self):
+
         id = self.tokenAtual
         self.consome(tt.ID)
         if self.leitura:
@@ -185,10 +186,6 @@ class Sintatico:
             self.consome(tt.BOOL)
         elif self.atualIgual(tt.CHAR):
             self.consome(tt.CHAR)
-        else:
-            print('ERRO DE SINTAXE [linha %d]: era esperado um Tipo mas veio "%s"'
-                  % (self.tokenAtual.linha, self.tokenAtual.lexema))
-            quit()
 
     def C_Comp(self):
         self.consome(tt.ABRECH)
@@ -257,7 +254,10 @@ class Sintatico:
         self.Expr()
         self.consome(tt.PTOVIRG)
         if self.validarVarDeclarado(id.lexema):
-            self.tabelasimbolos.atribuiValor(id.lexema, self.tokenExp)
+            if self.tokenExp == "":
+                self.tabelasimbolos.atribuiValor(id.lexema, None)
+            else:
+                self.tabelasimbolos.atribuiValor(id.lexema, self.tokenExp)
         self.tokenExp = ""
         self.podeAtribuir = False
 
@@ -364,6 +364,6 @@ class Sintatico:
 
 if __name__ == "__main__":
     # nome = input("Entre com o nome do arquivo: ")
-    nome = 'Testes/exemplo1.txt'
-    parser = Sintatico(Namespace(filename='Testes\\exemplo1.txt', tabela='tabela.txt'))
+    nome = 'Testes/exemplo3.txt'
+    parser = Sintatico(Namespace(filename=nome, tabela='tabela.txt'))
     parser.interprete(nome)

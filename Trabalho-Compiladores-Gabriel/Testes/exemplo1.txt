@@ -1,6 +1,6 @@
 //Programa sem erros
 program exemplo1;
-VAR y: int;
+VAR x,y: int;
     c:   char;
     r:   real;
     b:   bool;
@@ -10,14 +10,14 @@ VAR y: int;
     y = x;
     b = true;
     while(b)
-    {
-        if(y>=10)
-        {
+    { 
+        if(y>10)
+        { 
              write(y);
         }
         else
         {
-             y = y + 3 * k + x;
+             y = y + 3;
              b = false;
         }
      }
