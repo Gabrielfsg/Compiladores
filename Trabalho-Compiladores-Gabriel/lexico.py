@@ -162,7 +162,7 @@ class Lexico:
                     estado = 2
                 elif car.isdigit():
                     estado = 3
-                elif car in {'=', ';', ')','(', ',', ':','{','}','>','<','>=','<=','<>','!'}:
+                elif car in {'=', ';', ')','(', ',', ':','{','}','>','<','>=','<=','<>','!','*'}:
                     estado = 4
                 elif car == '/':
                     estado = 5

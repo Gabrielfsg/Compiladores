@@ -34,14 +34,15 @@
     FAT → id | cte | abrepar EXPR fechapar | true | false | opneg FAT}
 
 """
+from argparse import Namespace
 
 from lexico import TipoToken as tt, Lexico
-from tabela import TabelaSimbolos as tab
+from tabela import TabelaSimbolos
 
 
 class Sintatico:
 
-    def __init__(self,args):
+    def __init__(self, args):
         self.lex = None
         self.tokenAtual = None
         self.modoPanico = False
@@ -49,6 +50,9 @@ class Sintatico:
         self.tokensDeSincronismo = [tt.PTOVIRG, tt.FIMARQ]
         self.arg = args
         self.tabelasimbolos = None
+        self.podeAtribuir = False
+        self.leitura = False
+        self.tokenExp = ""
 
     def interprete(self, nomeArquivo):
         if not self.lex is None:
@@ -57,7 +61,7 @@ class Sintatico:
             self.lex = Lexico(nomeArquivo)
             self.lex.abreArquivo()
             self.tokenAtual = self.lex.getToken()
-            self.tabelasimbolos = tab
+            self.tabelasimbolos = TabelaSimbolos()
 
             self.Init()
             self.consome(tt.FIMARQ)
@@ -71,12 +75,26 @@ class Sintatico:
                 pass
 
             self.lex.fechaArquivo()
-            print("Programa Compilado com Sucesso.")
+            if self.deuErro:
+                print("Compilação Finalizada com erros.")
+            else:
+                print("Compilação Finalizada sem erros.")
             return not self.deuErro
 
     def atualIgual(self, token):
         (const, msg) = token
         return self.tokenAtual.const == const
+
+    def validarVarDeclarado(self, nome):
+        if self.deuErro:
+            return
+        if not self.tabelasimbolos.verificaSeJaExiste(nome):
+            self.deuErro = True
+            msg = "Variável: " + nome + ", não declarada."
+            print('ERRO DE SINTAXE [linha %d]: era esperado "%s" mas veio "%s"'
+                  % (self.tokenAtual.linha, msg, self.tokenAtual.lexema))
+        else:
+            return True
 
     def consome(self, token):
         if self.atualIgual(token) and not self.modoPanico:
@@ -85,7 +103,7 @@ class Sintatico:
             (const, msg) = token
             if self.tokenAtual.lexema == '<As aspas não foram fechadas.>':
                 print('ERRO DE SINTAXE [linha %d]: era esperado " Fechar Aspas ( " ) " mas veio "%s"'
-                      % (self.tokenAtual.linha,  self.tokenAtual.lexema))
+                      % (self.tokenAtual.linha, self.tokenAtual.lexema))
             else:
                 print('ERRO DE SINTAXE [linha %d]: era esperado "%s" mas veio "%s"'
                       % (self.tokenAtual.linha, msg, self.tokenAtual.lexema))
@@ -111,8 +129,10 @@ class Sintatico:
 
     def Prog(self):
         self.consome(tt.PROGRAM)
+        id = self.tokenAtual
         self.consome(tt.ID)
         self.consome(tt.PTOVIRG)
+        self.tabelasimbolos.declaraIdent(id.lexema, 'Var', 'Identificador de Programa', 'program')
         self.Decls()
         self.C_Comp()
 
@@ -140,7 +160,13 @@ class Sintatico:
         self.consome(tt.PTOVIRG)
 
     def List_Id(self):
+        id = self.tokenAtual
         self.consome(tt.ID)
+        if self.leitura:
+            if self.validarVarDeclarado(id.lexema):
+                self.tabelasimbolos.atribuiValor(id.lexema, 'Valor lido na funcao read.')
+        else:
+            self.tabelasimbolos.declaraIdent(id.lexema, 'Var', 'Identificador de Variavel', None)
         self.E()
 
     def E(self):
@@ -161,7 +187,7 @@ class Sintatico:
             self.consome(tt.CHAR)
         else:
             print('ERRO DE SINTAXE [linha %d]: era esperado um Tipo mas veio "%s"'
-              % (self.tokenAtual.linha, self.tokenAtual.lexema))
+                  % (self.tokenAtual.linha, self.tokenAtual.lexema))
             quit()
 
     def C_Comp(self):
@@ -174,7 +200,8 @@ class Sintatico:
         self.G()
 
     def G(self):
-        if self.atualIgual(tt.IF) or self.atualIgual(tt.WHILE) or self.atualIgual(tt.READ) or self.atualIgual(tt.WRITE) or self.atualIgual(tt.ID):
+        if self.atualIgual(tt.IF) or self.atualIgual(tt.WHILE) or self.atualIgual(tt.READ) or self.atualIgual(
+                tt.WRITE) or self.atualIgual(tt.ID):
             self.Lista_Comandos()
         else:
             pass
@@ -216,15 +243,23 @@ class Sintatico:
     def Leia(self):
         self.consome(tt.READ)
         self.consome(tt.OPENPAR)
+        self.leitura = True
         self.List_Id()
+        self.leitura = False
         self.consome(tt.CLOSEPAR)
         self.consome(tt.PTOVIRG)
 
     def Atribuicao(self):
+        id = self.tokenAtual
         self.consome(tt.ID)
         self.consome(tt.ATRIB)
+        self.podeAtribuir = True
         self.Expr()
         self.consome(tt.PTOVIRG)
+        if self.validarVarDeclarado(id.lexema):
+            self.tabelasimbolos.atribuiValor(id.lexema, self.tokenExp)
+        self.tokenExp = ""
+        self.podeAtribuir = False
 
     def Escreva(self):
         self.consome(tt.WRITE)
@@ -256,6 +291,9 @@ class Sintatico:
 
     def P(self):
         if self.atualIgual(tt.OPREL):
+            id = self.tokenAtual
+            if self.podeAtribuir:
+                self.tokenExp += id.lexema
             self.consome(tt.OPREL)
             self.Simples()
         else:
@@ -267,6 +305,9 @@ class Sintatico:
 
     def R(self):
         if self.atualIgual(tt.OPAD):
+            id = self.tokenAtual
+            if self.podeAtribuir:
+                self.tokenExp += id.lexema
             self.consome(tt.OPAD)
             self.Simples()
         else:
@@ -278,26 +319,44 @@ class Sintatico:
 
     def S(self):
         if self.atualIgual(tt.OPMUL):
+            id = self.tokenAtual
+            if self.podeAtribuir:
+                self.tokenExp += id.lexema
             self.consome(tt.OPMUL)
             self.Simples()
         else:
             pass
 
     def Fat(self):
+        id = self.tokenAtual
         if self.atualIgual(tt.ID):
             self.consome(tt.ID)
+            if self.podeAtribuir:
+                self.tokenExp += id.lexema
         elif self.atualIgual(tt.CTE):
             self.consome(tt.CTE)
+            if self.podeAtribuir:
+                self.tokenExp += id.lexema
         elif self.atualIgual(tt.OPENPAR):
             self.consome(tt.OPENPAR)
+            if self.podeAtribuir:
+                self.tokenExp += id.lexema
             self.Expr()
             self.consome(tt.CLOSEPAR)
+            if self.podeAtribuir:
+                self.tokenExp += id.lexema
         elif self.atualIgual(tt.TRUE):
             self.consome(tt.TRUE)
+            if self.podeAtribuir:
+                self.tokenExp += id.lexema
         elif self.atualIgual(tt.FALSE):
             self.consome(tt.FALSE)
+            if self.podeAtribuir:
+                self.tokenExp += id.lexema
         elif self.atualIgual(tt.OPNEG):
             self.consome(tt.OPNEG)
+            if self.podeAtribuir:
+                self.tokenExp += id.lexema
             self.Fat()
 
     ########################################
@@ -305,6 +364,6 @@ class Sintatico:
 
 if __name__ == "__main__":
     # nome = input("Entre com o nome do arquivo: ")
-    nome = 'Testes/exemplo7.txt'
-    parser = Sintatico()
+    nome = 'Testes/exemplo1.txt'
+    parser = Sintatico(Namespace(filename='Testes\\exemplo1.txt', tabela='tabela.txt'))
     parser.interprete(nome)
