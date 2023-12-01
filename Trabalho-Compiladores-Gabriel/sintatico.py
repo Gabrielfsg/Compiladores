@@ -38,6 +38,7 @@ from argparse import Namespace
 
 from lexico import TipoToken as tt, Lexico
 from tabela import TabelaSimbolos
+from sincronismo import Sincronismo
 
 
 class Sintatico:
@@ -50,6 +51,7 @@ class Sintatico:
         self.tokensDeSincronismo = [tt.PTOVIRG, tt.FIMARQ]
         self.arg = args
         self.tabelasimbolos = None
+        self.sincronismo = None
         self.podeAtribuir = False
         self.leitura = False
         self.tokenExp = ""
@@ -62,6 +64,7 @@ class Sintatico:
             self.lex.abreArquivo()
             self.tokenAtual = self.lex.getToken()
             self.tabelasimbolos = TabelaSimbolos()
+            self.sincronismo = Sincronismo()
             self.Init()
             self.consome(tt.FIMARQ)
 
@@ -160,14 +163,13 @@ class Sintatico:
         self.consome(tt.PTOVIRG)
 
     def List_Id(self):
-
         id = self.tokenAtual
         self.consome(tt.ID)
         if self.leitura:
             if self.validarVarDeclarado(id.lexema):
                 self.tabelasimbolos.atribuiValor(id.lexema, 'Valor lido na funcao read.')
         else:
-            self.tabelasimbolos.declaraIdent(id.lexema, 'Var', 'Identificador de Variavel', None)
+            self.tabelasimbolos.declaraIdent(id.lexema, None, 'Identificador de Variavel (VAR)', None)
         self.E()
 
     def E(self):
@@ -178,13 +180,18 @@ class Sintatico:
             pass
 
     def Tipo(self):
+        id = self.tokenAtual
         if self.atualIgual(tt.INT):
+            self.tabelasimbolos.atribuiTipo(id.lexema)
             self.consome(tt.INT)
         elif self.atualIgual(tt.REAL):
+            self.tabelasimbolos.atribuiTipo(id.lexema)
             self.consome(tt.REAL)
         elif self.atualIgual(tt.BOOL):
+            self.tabelasimbolos.atribuiTipo(id.lexema)
             self.consome(tt.BOOL)
         elif self.atualIgual(tt.CHAR):
+            self.tabelasimbolos.atribuiTipo(id.lexema)
             self.consome(tt.CHAR)
 
     def C_Comp(self):
@@ -364,6 +371,6 @@ class Sintatico:
 
 if __name__ == "__main__":
     # nome = input("Entre com o nome do arquivo: ")
-    nome = 'Testes/exemplo3.txt'
+    nome = 'Testes/exemplo1.txt'
     parser = Sintatico(Namespace(filename=nome, tabela='tabela.txt'))
     parser.interprete(nome)

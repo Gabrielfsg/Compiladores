@@ -19,6 +19,12 @@ class TabelaSimbolos:
         tipo, qualificacao, _ = self.tabela[nome]
         self.tabela[nome] = (tipo, qualificacao, valor)
 
+    def atribuiTipo(self, tipo):
+        for chave, value in self.tabela.items():
+            if value[0] is None:
+                _, qualificacao, valor = value
+                self.tabela[chave] = (tipo, qualificacao, valor)
+
     def __str__(self):
         retorno = "### Tabela de Simbolos ###\n"
         for chave, value in self.tabela.items():

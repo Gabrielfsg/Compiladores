@@ -1,6 +1,7 @@
 ### Tabela de Simbolos ###
-ID: exemplo3, Tipo: program, Qualificacao: Identificador de Programa, Valor: exemplo3
-ID: x, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: None
-ID: y, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: x
-ID: :, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: None
-ID: b, Tipo: Var, Qualificacao: Identificador de Variavel, Valor: false
+ID: exemplo1, Tipo: program, Qualificacao: Identificador de Programa, Valor: exemplo1
+ID: x, Tipo: int, Qualificacao: Identificador de Variavel (VAR), Valor: Valor lido na funcao read.
+ID: y, Tipo: int, Qualificacao: Identificador de Variavel (VAR), Valor: y+3
+ID: c, Tipo: char, Qualificacao: Identificador de Variavel (VAR), Valor: None
+ID: r, Tipo: real, Qualificacao: Identificador de Variavel (VAR), Valor: None
+ID: b, Tipo: bool, Qualificacao: Identificador de Variavel (VAR), Valor: false
