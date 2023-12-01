@@ -52,9 +52,6 @@ class Sintatico:
         self.arg = args
         self.tabelasimbolos = None
         self.sincronismo = None
-        self.podeAtribuir = False
-        self.leitura = False
-        self.tokenExp = ""
 
     def interprete(self, nomeArquivo):
         if not self.lex is None:
@@ -135,7 +132,7 @@ class Sintatico:
         id = self.tokenAtual
         self.consome(tt.ID)
         self.consome(tt.PTOVIRG)
-        self.tabelasimbolos.declaraIdent(id.lexema, 'program', 'Identificador de Programa', id.lexema)
+        self.tabelasimbolos.declaraIdent(id.lexema, 'program', 'Identificador de Programa')
         self.Decls()
         self.C_Comp()
 
@@ -165,11 +162,7 @@ class Sintatico:
     def List_Id(self):
         id = self.tokenAtual
         self.consome(tt.ID)
-        if self.leitura:
-            if self.validarVarDeclarado(id.lexema):
-                self.tabelasimbolos.atribuiValor(id.lexema, 'Valor lido na funcao read.')
-        else:
-            self.tabelasimbolos.declaraIdent(id.lexema, None, 'Identificador de Variavel (VAR)', None)
+        self.tabelasimbolos.declaraIdent(id.lexema, None, 'Identificador de Variavel (VAR)')
         self.E()
 
     def E(self):
@@ -247,26 +240,15 @@ class Sintatico:
     def Leia(self):
         self.consome(tt.READ)
         self.consome(tt.OPENPAR)
-        self.leitura = True
         self.List_Id()
-        self.leitura = False
         self.consome(tt.CLOSEPAR)
         self.consome(tt.PTOVIRG)
 
     def Atribuicao(self):
-        id = self.tokenAtual
         self.consome(tt.ID)
         self.consome(tt.ATRIB)
-        self.podeAtribuir = True
         self.Expr()
         self.consome(tt.PTOVIRG)
-        if self.validarVarDeclarado(id.lexema):
-            if self.tokenExp == "":
-                self.tabelasimbolos.atribuiValor(id.lexema, None)
-            else:
-                self.tabelasimbolos.atribuiValor(id.lexema, self.tokenExp)
-        self.tokenExp = ""
-        self.podeAtribuir = False
 
     def Escreva(self):
         self.consome(tt.WRITE)
@@ -298,9 +280,6 @@ class Sintatico:
 
     def P(self):
         if self.atualIgual(tt.OPREL):
-            id = self.tokenAtual
-            if self.podeAtribuir:
-                self.tokenExp += id.lexema
             self.consome(tt.OPREL)
             self.Simples()
         else:
@@ -312,9 +291,6 @@ class Sintatico:
 
     def R(self):
         if self.atualIgual(tt.OPAD):
-            id = self.tokenAtual
-            if self.podeAtribuir:
-                self.tokenExp += id.lexema
             self.consome(tt.OPAD)
             self.Simples()
         else:
@@ -326,44 +302,26 @@ class Sintatico:
 
     def S(self):
         if self.atualIgual(tt.OPMUL):
-            id = self.tokenAtual
-            if self.podeAtribuir:
-                self.tokenExp += id.lexema
             self.consome(tt.OPMUL)
             self.Simples()
         else:
             pass
 
     def Fat(self):
-        id = self.tokenAtual
         if self.atualIgual(tt.ID):
             self.consome(tt.ID)
-            if self.podeAtribuir:
-                self.tokenExp += id.lexema
         elif self.atualIgual(tt.CTE):
             self.consome(tt.CTE)
-            if self.podeAtribuir:
-                self.tokenExp += id.lexema
         elif self.atualIgual(tt.OPENPAR):
             self.consome(tt.OPENPAR)
-            if self.podeAtribuir:
-                self.tokenExp += id.lexema
             self.Expr()
             self.consome(tt.CLOSEPAR)
-            if self.podeAtribuir:
-                self.tokenExp += id.lexema
         elif self.atualIgual(tt.TRUE):
             self.consome(tt.TRUE)
-            if self.podeAtribuir:
-                self.tokenExp += id.lexema
         elif self.atualIgual(tt.FALSE):
             self.consome(tt.FALSE)
-            if self.podeAtribuir:
-                self.tokenExp += id.lexema
         elif self.atualIgual(tt.OPNEG):
             self.consome(tt.OPNEG)
-            if self.podeAtribuir:
-                self.tokenExp += id.lexema
             self.Fat()
 
     ########################################
