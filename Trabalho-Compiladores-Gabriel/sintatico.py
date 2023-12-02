@@ -159,7 +159,7 @@ class Sintatico:
     def List_Id(self):
         id = self.tokenAtual
         self.consome(tt.ID, [(27, ','),(1, 'id'),(28, ':')])
-        if not self.leitura:
+        if not self.leitura and id.const != 12:
             self.tabelasimbolos.declaraIdent(id.lexema, None, 'Identificador de Variavel (VAR)')
         self.E()
 
@@ -335,6 +335,6 @@ class Sintatico:
 
 if __name__ == "__main__":
     # nome = input("Entre com o nome do arquivo: ")
-    nome = 'Testes/exemplo12.txt'
+    nome = 'Testes/exemplo4.txt'
     parser = Sintatico(Namespace(filename=nome, tabela='tabela.txt'))
     parser.interprete(nome)

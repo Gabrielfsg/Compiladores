@@ -1,7 +1,4 @@
 ### Tabela de Simbolos ###
-ID: exemplo12, Tipo: program, Qualificacao: Identificador de Programa
-ID: x, Tipo: int, Qualificacao: Identificador de Variavel (VAR)
-ID: y, Tipo: int, Qualificacao: Identificador de Variavel (VAR)
-ID: c, Tipo: char, Qualificacao: Identificador de Variavel (VAR)
+ID: exemplo4, Tipo: program, Qualificacao: Identificador de Programa
 ID: r, Tipo: real, Qualificacao: Identificador de Variavel (VAR)
 ID: b, Tipo: bool, Qualificacao: Identificador de Variavel (VAR)
