@@ -335,6 +335,6 @@ class Sintatico:
 
 if __name__ == "__main__":
     # nome = input("Entre com o nome do arquivo: ")
-    nome = 'Testes/exemplo4.txt'
+    nome = 'Testes/exemplo3.txt'
     parser = Sintatico(Namespace(filename=nome, tabela='tabela.txt'))
     parser.interprete(nome)

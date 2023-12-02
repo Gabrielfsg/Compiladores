@@ -199,7 +199,7 @@ class Lexico:
                         self.ungetChar(car)
                         return Token(TipoToken.CTE, lexema, self.linha)
                     else:
-                        estado = 11
+                        estado = 12
             elif estado == 4:
                 # estado que trata outros tokens primitivos comuns
                 car, lexema = self.desempilhaLetra(car,lexema)
@@ -325,6 +325,16 @@ class Lexico:
                     return Token(TipoToken.ERROR, '<' + lexema + ', Id invalido.' + '>', self.linha)
                 elif car is None:
                     return Token(TipoToken.FIMARQ, '<eof>', self.linha)
+            elif estado == 12:
+                lexema = lexema + car
+                car = self.getChar()
+                if car == ';':
+                    self.ungetChar(car)
+                    self.ungeterro = True
+                    return Token(TipoToken.ERROR, '<' + lexema + ', Id invalido.' + '>', self.linha)
+                elif car is None or car == ' ' or car == ',':
+                    self.ungetChar(car)
+                    return Token(TipoToken.ERROR, '<' + lexema + ', Id invalido.' + '>', self.linha)
 
 
 
@@ -333,7 +343,7 @@ class Lexico:
 if __name__== "__main__":
 
    #nome = input("Entre com o nome do arquivo: ")
-   nome = 'Testes/exemplo3.txt'
+   nome = 'Testes/exemplo1.txt'
    lex = Lexico(nome)
    lex.abreArquivo()
 
