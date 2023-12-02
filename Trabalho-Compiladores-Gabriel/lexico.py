@@ -323,6 +323,8 @@ class Lexico:
                     self.ungetChar(car)
                     self.ungeterro = True
                     return Token(TipoToken.ERROR, '<' + lexema + ', Id invalido.' + '>', self.linha)
+                elif car is None:
+                    return Token(TipoToken.FIMARQ, '<eof>', self.linha)
 
 
 
