@@ -320,7 +320,7 @@ class Sintatico:
         elif self.atualIgual(tt.CTE):
             self.consome(tt.CTE, [(7, 'os operadores + e -'),(11, 'cte'),(6, 'operadores relacionais ==, <, >, <=, >=, <>'),(1, 'id')])
         elif self.atualIgual(tt.OPENPAR):
-            self.consome(tt.OPENPAR, [(10, ')')])
+            self.consome(tt.OPENPAR, [(10, ')'),(15, 'if'),(22, 'while'),(5, 'write'),(3, 'read'),(1, 'id'),(26, '}'),(16, 'else')])
             self.Expr()
             self.consome(tt.CLOSEPAR)
         elif self.atualIgual(tt.TRUE):
