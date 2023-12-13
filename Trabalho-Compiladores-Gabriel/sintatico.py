@@ -287,7 +287,7 @@ class Sintatico:
 
     def P(self):
         if self.atualIgual(tt.OPREL):
-            self.consome(tt.OPREL)
+            self.consome(tt.OPREL,[(6, 'operadores relacionais ==, <, >, <=, >=, <>')])
             self.Simples()
         else:
             pass
@@ -298,7 +298,7 @@ class Sintatico:
 
     def R(self):
         if self.atualIgual(tt.OPAD):
-            self.consome(tt.OPAD)
+            self.consome(tt.OPAD,[(7, 'os operadores + e -'), (6, 'operadores relacionais ==, <, >, <=, >=, <>')])
             self.Simples()
         else:
             pass
@@ -309,7 +309,7 @@ class Sintatico:
 
     def S(self):
         if self.atualIgual(tt.OPMUL):
-            self.consome(tt.OPMUL)
+            self.consome(tt.OPMUL,[(7, 'os operadores + e -'), (8, 'os operadores * e /'),(6, 'operadores relacionais ==, <, >, <=, >=, <>')])
             self.Simples()
         else:
             pass
