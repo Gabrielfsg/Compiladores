@@ -38,6 +38,7 @@ from argparse import Namespace
 
 from lexico import TipoToken as tt, Lexico
 from tabela import TabelaSimbolos
+import os
 
 class Sintatico:
 
@@ -65,7 +66,10 @@ class Sintatico:
 
             try:
                 if self.arg.tabela != None:
-                    open(self.arg.tabela, 'w').write(self.tabelasimbolos.__str__())
+                    if os.path.exists(self.arg.tabela):
+                        open(self.arg.tabela, 'w').write(self.tabelasimbolos.__str__())
+                    else:
+                        print(f'O arquivo {self.arg.tabela} não existe, logo não foi possivel salvar a tabela de simbolos no arquivo.')
                 else:
                     print(self.tabelasimbolos.__str__())
             except Exception:
@@ -232,10 +236,10 @@ class Sintatico:
             pass
 
     def Enquanto(self):
-        self.consome(tt.WHILE, [(9, '('),])
+        self.consome(tt.WHILE, [(9, '('),(1, 'id'),(24, 'true'),(23, 'false'),(11, 'cte'),(10, ')')])
         self.consome(tt.OPENPAR,[(10, ')'),(1, 'id'),(24, 'true'),(23, 'false'),(11, 'cte')])
         self.Expr()
-        self.consome(tt.CLOSEPAR, [(25, '{')])
+        self.consome(tt.CLOSEPAR, [(25, '{'),(3, 'read'),(15, 'if'),(22, 'while'),(1, 'id')])
         self.C_Comp()
 
     def Leia(self):
